@@ -5,30 +5,7 @@ import sys
 import os
 import datetime
 
-# Auto backup. Only back up changed files. Paths are from user's input
-def auto_backup(target, destination):
-    # Appending scripts to crontab, source: https://stackoverflow.com/questions/8579330/appending-to-crontab-with-a-shell-script-on-ubuntu
-    # rsync from OPS345
-    # -a is archive mode (preserves permissions, timestamps, symlinks, etc.)
-    # -c is to check file hash to back up only changed files (default only check timestamps and sizes)
-    crontab_cmd = f"(crontab -l 2>/dev/null; echo '* * * * * rsync -avc {target} {destination}') | crontab -"
-    # Execute Linux command in python. exact syntax from the lab.
-    process = subprocess.Popen(crontab_cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    process.wait()
-    return process.returncode
-
-# Manual backup. Paths and file name are from user's input
-def manual_backup(target, destination, backup_name):
-    # Use tar to archive and compress folder to another location in the system
-    tar_cmd = f"tar cvzf {destination}{backup_name}.tar.gz {target}"
-    process = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    # Wait till the backup process is complete
-    process.wait()
-    # Return the exit code
-    return process.returncode
-
-
-if __name__ == "__main__":
+def main():
     # If the user did not enter correct arguments, ask user to choose backup mode
     if len(sys.argv) != 4:
         mode = int(input(f"Welcome to use BackupG4 to back up your files.\nRun the file as \"{sys.argv[0]} target_path destination_path backup_name\" to do manual backup\nPlease choose backup mode(1/2):\n1, Auto backup\n2, Manual backup\n"))
@@ -87,3 +64,29 @@ if __name__ == "__main__":
 
         else:
             print("You did not provide the correct addresses as the arguments and choose a correct mode. Aborting...")
+
+# Auto backup. Only back up changed files. Paths are from user's input
+def auto_backup(target, destination):
+    # Appending scripts to crontab, source: https://stackoverflow.com/questions/8579330/appending-to-crontab-with-a-shell-script-on-ubuntu
+    # rsync from OPS345
+    # -a is archive mode (preserves permissions, timestamps, symlinks, etc.)
+    # -c is to check file hash to back up only changed files (default only check timestamps and sizes)
+    crontab_cmd = f"(crontab -l 2>/dev/null; echo '* * * * * rsync -avc {target} {destination}') | crontab -"
+    # Execute Linux command in python. exact syntax from the lab.
+    process = subprocess.Popen(crontab_cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    process.wait()
+    return process.returncode
+
+# Manual backup. Paths and file name are from user's input
+def manual_backup(target, destination, backup_name):
+    # Use tar to archive and compress folder to another location in the system
+    tar_cmd = f"tar cvzf {destination}{backup_name}.tar.gz {target}"
+    process = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    # Wait till the backup process is complete
+    process.wait()
+    # Return the exit code
+    return process.returncode
+
+
+if __name__ == "__main__":
+    main()
