@@ -27,40 +27,19 @@ def main():
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             dest_path = f"{sys.argv[2]}"
             backup_name = f"{sys.argv[3]}_{timestamp}"
-            try:
-                # source: https://www.w3schools.com/python/ref_os_makedirs.asp
-                # exist_ok set to True means if the file already exists, continue without raising an exception
-                os.makedirs(dest_path, exist_ok=True)
-            # Incorrect permission of the destination folder could cause this problem 
-            except IOError:
-                print("The folder cannot be created. Aborting...\nPlease check the permissions of the related folder.")
-                exit()
             
-            print("Backing up...")
-            # Call the function and assign the return value exit code to the varible
-            result = manual_backup(target_path, dest_path, backup_name)
-            if result == 0:
-                print("Successful! Your files has been backed up.")
-            else:
-                print("Backup failed, aborting...")
+            # Call manual_backup function
+            manual_backup(target_path, dest_path, backup_name)
+ 
         # If the user chose 2 manual backup, run manual backup. All the user's inputs are from the input function
         elif mode == 2:
             target_path = input("Please enter the path you want to back up:")
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             dest_path = input("Please enter the path of the backup destination(include \"/\")")
             backup_name = input("Please enter a name of your backup:") + f"_{timestamp}"
-            try:
-                os.makedirs(dest_path, exist_ok=True)
-            except IOError:
-                print("The folder cannot be created. Aborting...\nPlease check the permissions of the related folder.")
-                exit()
-            
-            print("Backing up...")
-            result = manual_backup(target_path, dest_path, backup_name)
-            if result == 0:
-                print("Successful! Your files has been backed up.")
-            else:
-                print("Backup failed, aborting...")
+
+            manual_backup(target_path, dest_path, backup_name)
+
 
         else:
             print("You did not provide the correct addresses as the arguments and choose a correct mode. Aborting...")
@@ -71,7 +50,8 @@ def auto_backup(target, destination):
     # rsync from OPS345
     # -a is archive mode (preserves permissions, timestamps, symlinks, etc.)
     # -c is to check file hash to back up only changed files (default only check timestamps and sizes)
-    crontab_cmd = f"(crontab -l 2>/dev/null; echo '* * * * * rsync -avc {target} {destination}') | crontab -"
+    # 0 0 * * 6 means every Saturday at 00:00 AM
+    crontab_cmd = f"(crontab -l 2>/dev/null; echo '0 0 * * 6 rsync -avc {target} {destination}') | crontab -"
     # Execute Linux command in python. exact syntax from the lab.
     process = subprocess.Popen(crontab_cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     process.wait()
@@ -79,13 +59,35 @@ def auto_backup(target, destination):
 
 # Manual backup. Paths and file name are from user's input
 def manual_backup(target, destination, backup_name):
+    try:
+        # source: https://www.w3schools.com/python/ref_os_makedirs.asp
+        # exist_ok set to True means if the file already exists, continue without raising an exception
+        os.makedirs(destination, exist_ok=True)
+    # Incorrect permission of the destination folder could cause this problem 
+    except IOError:
+        print("The folder cannot be created. Aborting...\nPlease check the permissions of the related folder.")
+        exit()
+    exclude_or_not = input("Do you want to exclude any files or folders?(y/n)")
+    if exclude_or_not == "y":
+        exclude = input("Enter the files or folders you want to exclude(separate them by space):")
+        exclude_list = exclude.split()
+        for x in exclude_list:
+            target = f"--exclude {x} " + target
+
+    print("Backing up...")
     # Use tar to archive and compress folder to another location in the system
     tar_cmd = f"tar cvzf {destination}{backup_name}.tar.gz {target}"
     process = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     # Wait till the backup process is complete
     process.wait()
-    # Return the exit code
-    return process.returncode
+
+    # check exit code
+    if process.returncode == 0:
+        print("Successful! Your files has been backed up.")
+    else:
+        print("Backup failed, aborting...")
+    
+
 
 
 if __name__ == "__main__":
