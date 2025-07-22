@@ -18,13 +18,13 @@ def main():
                 print("Auto backup enabled, a schedule has been added to the crontab.")
             else:
                 print("Enable auto backup failed, unable to add the crontab.")
-
+            return
          # If the user chose 2 manual backup, run manual backup. All the user's inputs are from the input function
         
 
     # If the user entered correct arguments, run manual backup. All the user's inputs are from the arguments
-    print("Welcome to use BackupG4. Entering Manual backup...")
     if len(sys.argv) == 4: 
+        print("Welcome to use BackupG4. Entering Manual backup...")
         target_path = sys.argv[1]
         # source: https://docs.python.org/3/library/datetime.html#datetime.datetime.strftime
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -36,6 +36,7 @@ def main():
         return
 
     if mode == 2:
+        print("Welcome to use BackupG4. Entering Manual backup...")
         target_path = input("Please enter the path you want to back up:")
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         dest_path = input("Please enter the path of the backup destination(include \"/\")")
@@ -54,7 +55,7 @@ def auto_backup(target, destination):
     # -a is archive mode (preserves permissions, timestamps, symlinks, etc.)
     # -c is to check file hash to back up only changed files (default only check timestamps and sizes)
     # 0 0 * * 6 means every Saturday at 00:00 AM
-    crontab_cmd = f'crontab -l | {{cat; echo "0 0 * * 6 rsync -avc {target} {destination}"; }} | crontab -'
+    crontab_cmd = f"(crontab -l 2>/dev/null; echo '0 0 * * 6 rsync -avc {target} {destination}') | crontab -"
     # Execute Linux command in python. exact syntax from the lab.
     process = subprocess.Popen(crontab_cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     process.wait()
