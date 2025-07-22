@@ -22,7 +22,6 @@ def main():
                 return
             # If the user chose 2 manual backup, run manual backup. All the user's inputs are from the input function
             
-
         # If the user entered correct arguments, run manual backup. All the user's inputs are from the arguments
         if len(sys.argv) == 4: 
             print("Welcome to use BackupG4. Entering Manual backup...")
@@ -69,7 +68,7 @@ def auto_backup(target, destination):
 def manual_backup(target, destination, backup_name):
     target = target.rsplit("/",1)
     target = " ".join(target)
-    target = "-C "+target
+    target = "-C "+target #this for the tar command later so it will change the directory instead of copying all the file from the path
     try:
         # source: https://www.w3schools.com/python/ref_os_makedirs.asp
         # exist_ok set to True means if the file already exists, continue without raising an exception
@@ -98,8 +97,5 @@ def manual_backup(target, destination, backup_name):
     else:
         print("Backup failed, aborting...")
     
-
-
-
 if __name__ == "__main__":
     main()
