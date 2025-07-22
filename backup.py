@@ -8,45 +8,49 @@ import datetime
 
 def main():
     # If the user did not enter correct arguments, ask user to choose backup mode
-    if len(sys.argv) != 4:
-        mode = int(input(f"Welcome to use BackupG4 to back up your files.\nRun the file as \"{sys.argv[0]} target_path destination_path backup_name\" to do manual backup\nPlease choose backup mode(1/2):\n1, Auto backup\n2, Manual backup\n"))
-        if mode == 1:
-            target_path = input("Entering auto backup...\nPlease enter the path you want to back up:")
-            dest_path = input("Please enter the path you want to store the backup:")
-            auto_result = auto_backup(target_path, dest_path)
-            if auto_result == 0:
-                print("Auto backup enabled, a schedule has been added to the crontab.")
-            else:
-                print("Enable auto backup failed, unable to add the crontab.")
-            return
-         # If the user chose 2 manual backup, run manual backup. All the user's inputs are from the input function
-        
-
-    # If the user entered correct arguments, run manual backup. All the user's inputs are from the arguments
-    if len(sys.argv) == 4: 
-        print("Welcome to use BackupG4. Entering Manual backup...")
-        target_path = sys.argv[1]
-        # source: https://docs.python.org/3/library/datetime.html#datetime.datetime.strftime
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        dest_path = f"{sys.argv[2]}"
-        backup_name = f"{sys.argv[3]}_{timestamp}"
+    try:
+        if len(sys.argv) != 4:
+            mode = int(input(f"Welcome to use BackupG4 to back up your files.\nRun the file as \"{sys.argv[0]} target_path destination_path backup_name\" to do manual backup\nPlease choose backup mode(1/2):\n1, Auto backup\n2, Manual backup\n"))
+            if mode == 1:
+                target_path = input("Entering auto backup...\nPlease enter the path you want to back up:")
+                dest_path = input("Please enter the path you want to store the backup:")
+                auto_result = auto_backup(target_path, dest_path)
+                if auto_result == 0:
+                    print("Auto backup enabled, a schedule has been added to the crontab.")
+                else:
+                    print("Enable auto backup failed, unable to add the crontab.")
+                return
+            # If the user chose 2 manual backup, run manual backup. All the user's inputs are from the input function
             
-        # Call manual_backup function
-        manual_backup(target_path, dest_path, backup_name)
+
+        # If the user entered correct arguments, run manual backup. All the user's inputs are from the arguments
+        if len(sys.argv) == 4: 
+            print("Welcome to use BackupG4. Entering Manual backup...")
+            target_path = sys.argv[1]
+            # source: https://docs.python.org/3/library/datetime.html#datetime.datetime.strftime
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            dest_path = f"{sys.argv[2]}"
+            backup_name = f"{sys.argv[3]}_{timestamp}"
+                
+            # Call manual_backup function
+            manual_backup(target_path, dest_path, backup_name)
+            return
+
+        if mode == 2:
+            print("Welcome to use BackupG4. Entering Manual backup...")
+            target_path = input("Please enter the path you want to back up:")
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            dest_path = input("Please enter the path of the backup destination(include \"/\")")
+            backup_name = input("Please enter a name of your backup:") + f"_{timestamp}"
+
+            manual_backup(target_path, dest_path, backup_name)
+            return
+    
+    except:
+        print("You did not provide the correct addresses as the arguments and choose a correct mode. Aborting...")
         return
-
-    if mode == 2:
-        print("Welcome to use BackupG4. Entering Manual backup...")
-        target_path = input("Please enter the path you want to back up:")
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        dest_path = input("Please enter the path of the backup destination(include \"/\")")
-        backup_name = input("Please enter a name of your backup:") + f"_{timestamp}"
-
-        manual_backup(target_path, dest_path, backup_name)
-        return
- 
-
     print("You did not provide the correct addresses as the arguments and choose a correct mode. Aborting...")
+    return
 
 # Auto backup. Only back up changed files. Paths are from user's input
 def auto_backup(target, destination):
