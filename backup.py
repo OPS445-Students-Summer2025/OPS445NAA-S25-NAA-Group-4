@@ -13,8 +13,24 @@ def main():
             mode = int(input(f"Welcome to use BackupG4 to back up your files.\nRun the file as \"{sys.argv[0]} target_path destination_path backup_name\" to do manual backup\nPlease choose backup mode(1/2):\n1, Auto backup\n2, Manual backup\n"))
             if mode == 1:
                 target_path = input("Entering auto backup...\nPlease enter the path you want to back up:")
+                target_path = target_path.rsplit("/",1)
+                target_path = " ".join(target_path)
+                target_path = "-C "+target_path
+
                 dest_path = input("Please enter the path you want to store the backup:")
-                auto_result = auto_backup(target_path, dest_path)
+                if not re.findall(r'\/$',dest_path):
+                    dest_path = dest_path + "/"
+                
+                exclude_or_not = input("Do you want to exclude any files or folders?(y/n)")
+                if exclude_or_not == "y":
+                    exclude = input("Enter the files or folders you want to exclude(separate them by space):")
+                    exclude_list = exclude.split(" ")
+                    for x in exclude_list:
+                        target_path = f"--exclude {x} " + target_path
+
+                backup_name = input("Please enter a name of your backup:")
+
+                auto_result = auto_backup(target_path, dest_path, backup_name)
                 if auto_result == 0:
                     print("Auto backup enabled, a schedule has been added to the crontab.")
                 else:
@@ -29,6 +45,8 @@ def main():
             # source: https://docs.python.org/3/library/datetime.html#datetime.datetime.strftime
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             dest_path = f"{sys.argv[2]}"
+            if not re.findall(r'\/$',dest_path):
+                dest_path = dest_path + "/"
             backup_name = f"{sys.argv[3]}_{timestamp}"
                 
             # Call manual_backup function
@@ -54,13 +72,14 @@ def main():
     return
 
 # Auto backup. Only back up changed files. Paths are from user's input
-def auto_backup(target, destination):
+def auto_backup(target, destination, name):
     # Appending scripts to crontab, source: https://stackoverflow.com/questions/8579330/appending-to-crontab-with-a-shell-script-on-ubuntu
     # rsync from OPS345
     # -a is archive mode (preserves permissions, timestamps, symlinks, etc.)
     # -c is to check file hash to back up only changed files (default only check timestamps and sizes)
     # 0 0 * * 6 means every Saturday at 00:00 AM
-    crontab_cmd = f"(crontab -l 2>/dev/null; echo '0 0 * * 6 rsync -avc {target} {destination}') | crontab -"
+    autoscriptpath = re.sub(r'\/[^/]*$',"/autobackup.py",sys.argv[0])
+    crontab_cmd = f'(crontab -l 2>/dev/null; echo \'0 0 * * 6 {autoscriptpath} "{target}" {destination} {name}\') | crontab -'
     # Execute Linux command in python. exact syntax from the lab.
     process = subprocess.Popen(crontab_cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     process.wait()
