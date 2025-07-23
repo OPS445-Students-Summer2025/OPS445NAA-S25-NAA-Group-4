@@ -1,10 +1,10 @@
-
 #!/usr/bin/env python3
 
 import subprocess
 import sys
 import os
 import datetime
+import re
 
 def main():
     # If the user did not enter correct arguments, ask user to choose backup mode
@@ -39,7 +39,9 @@ def main():
             print("Welcome to use BackupG4. Entering Manual backup...")
             target_path = input("Please enter the path you want to back up:")
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-            dest_path = input("Please enter the path of the backup destination(include \"/\")")
+            dest_path = input("Please enter the path of the backup destination")
+            if not re.findall(r'\/$',dest_path):
+                dest_path = dest_path + "/"
             backup_name = input("Please enter a name of your backup:") + f"_{timestamp}"
 
             manual_backup(target_path, dest_path, backup_name)
