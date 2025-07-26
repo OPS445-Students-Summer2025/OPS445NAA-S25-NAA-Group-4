@@ -23,7 +23,8 @@ process.wait()
 if process.returncode == 0:
      pass
 else:
-     pass
+     removecroncmd = f'crontab -l | grep -v \'{sys.argv[0]} "{sys.argv[1]}" {sys.argv[2]} {sys.argv[3]}\' | crontab -'
+     process = subprocess.Popen(removecroncmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
 filelist = glob.glob(f"{dest_path}{sys.argv[3]}_*_*.tar.gz")
 if len(filelist) > 10:
