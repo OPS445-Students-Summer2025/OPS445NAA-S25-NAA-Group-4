@@ -17,6 +17,7 @@ Description: <Script will perform backup and restore capabilities
               sometime in the near future.>
 '''
 import backup
+import os
 
 #Run Main Code here as the menu
 if __name__ == '__main__':
@@ -27,6 +28,7 @@ if __name__ == '__main__':
     if choice == '1':
         #Do Backup code and prompts here
         #Right now, still trying to figure out how to pass in cmd line arguments from this program to backup.main()
+        os.system("clear")
         backup.main()
     
     if choice == '2':
