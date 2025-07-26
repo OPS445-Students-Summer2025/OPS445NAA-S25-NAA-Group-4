@@ -12,7 +12,12 @@ def main():
     try:
         if len(sys.argv) == 4: 
             print("Welcome to use BackupG4. Entering Manual backup...")
+
             target_path = sys.argv[1]
+            target_path = target_path.rsplit("/",1)
+            target_path = " ".join(target_path)
+            target_path = "-C "+target_path
+
             dest_path = f"{sys.argv[2]}"
             if not re.findall(r'\/$',dest_path):
                 dest_path = dest_path + "/"
