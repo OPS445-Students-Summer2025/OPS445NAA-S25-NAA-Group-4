@@ -4,6 +4,8 @@ import subprocess
 import sys
 import os
 import datetime
+#sources https://stackoverflow.com/questions/3207219/how-do-i-list-all-files-of-a-directory
+import glob
 
 timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 target_path = sys.argv[1]
@@ -22,3 +24,8 @@ if process.returncode == 0:
      pass
 else:
      pass
+
+filelist = glob.glob(f"{dest_path}{sys.argv[3]}_*_*.tar.gz")
+if len(filelist) > 10:
+     filelist.sort()
+     os.remove(filelist[0])
