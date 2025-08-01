@@ -11,6 +11,7 @@ def main():
     # If the user entered correct arguments, run manual backup. All the user's inputs are from the arguments
     try:
         if len(sys.argv) == 4: 
+
             print("Welcome to BackupG4. Entering Manual backup...")
 
             target_path = sys.argv[1]
@@ -29,8 +30,10 @@ def main():
         
     # If the user did not enter correct arguments, ask user to choose backup mode
         if len(sys.argv) != 4:
-            mode = int(input(f"Welcome to BackupG4, a program to back up your files.\nYou have 2 options:\nRun the file as \"{sys.argv[0]} target_path destination_path backup_name\" to do a manual backup\nOR\nChoose a backup mode:\n1, Auto backup\n2, Manual backup\n"))
-            
+                  
+            mode = int(input(f"Welcome to BackupG4, a program to back up your files.\nYou have 2 options:\nRerun the file as \"{sys.argv[0]} target_path destination_path backup_name\" to do a manual backup\nOR\nChoose a backup mode:\n1, Auto backup\n2, Manual backup\n"))
+
+    
             target_path = input("Please enter the path you want to back up:")
             target_path = target_path.rsplit("/",1)
             target_path = " ".join(target_path)
