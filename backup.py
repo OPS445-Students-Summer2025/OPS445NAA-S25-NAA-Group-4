@@ -15,6 +15,13 @@ def main():
             print("Welcome to BackupG4. Entering Manual backup...")
 
             target_path = sys.argv[1]
+            # support home directory expansion "~". source https://docs.python.org/3/library/os.path.html#os.path.expanduser
+            target_path = os.path.expanduser(target_path)
+
+            # check if the file or folder exists. source https://docs.python.org/3/library/os.path.html#os.path.exists
+            if not os.path.exists(target_path):
+                print(f"{target_path} does not exist.")
+                return
             target_path = target_path.rsplit("/",1)
             target_path = " ".join(target_path)
             target_path = "-C "+target_path #the target path ends like this: "-C /home/thko1/ops445/a2 filename" this is for the tar command later
@@ -23,7 +30,8 @@ def main():
             if not re.findall(r'\/$',dest_path): #check if the path ends with a / if not then add / to the end
                 dest_path = dest_path + "/" #add / to the end
             backup_name = f"{sys.argv[3]}" 
-                
+            
+            dest_path = os.path.expanduser(dest_path)
             # Call manual_backup function
             manual_backup(target_path, dest_path, backup_name) #call backup function
             return
@@ -33,13 +41,17 @@ def main():
                   
             mode = int(input(f"Welcome to BackupG4, a program to back up your files.\nYou have 2 options:\nRerun the file as \"{sys.argv[0]} target_path destination_path backup_name\" to do a manual backup\nOR\nChoose a backup mode:\n1, Auto backup\n2, Manual backup\n"))
 
-    
             target_path = input("Please enter the path you want to back up:")
+            target_path = os.path.expanduser(target_path)
+            if not os.path.exists(target_path):
+                print(f"{target_path} does not exist.")
+                return
             target_path = target_path.rsplit("/",1)
             target_path = " ".join(target_path)
             target_path = "-C "+target_path #the target path ends like this: "-C /home/thko1/ops445/a2 filename" this is for the tar command later
             
             dest_path = input("Please enter the path you want to store the backup:") 
+            dest_path = os.path.expanduser(dest_path)
             #source https://docs.python.org/3/library/re.html
             if not re.findall(r'\/$',dest_path): #check if the path ends with a / if not then add / to the end
                 dest_path = dest_path + "/"  #add / to the end
@@ -52,6 +64,7 @@ def main():
                     target_path = f"--exclude {x} " + target_path #end prodcut will be like: "--exclude test1 test2 -C /home/thko1/ops445/a2 filename"
 
             backup_name = input("Please enter a name of your backup:")
+            
 
             if mode == 1:
                 print("Entering auto backup...")
@@ -86,6 +99,7 @@ def auto_backup(target, destination, name):
     crontab_cmd = f'(crontab -l 2>/dev/null; echo \'0 0 * * 6 {autoscriptpath} "{target}" {destination} {name}\') | crontab -' #the cronjob will be like: 0 0 * * 6 /home/thko1/ops445/a2/autobackup.py "--exclude test1 test2 -C /home/thko1/ops445/a2 filename" /home/thko1/ops445/a2/backup/ test 
     # Execute Linux command in python. exact syntax from the lab.
     process = subprocess.Popen(crontab_cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    # Wait till the backup process is complete. source https://docs.python.org/3/library/subprocess.html#subprocess.Popen.wait
     process.wait()
     return process.returncode #return 0 if successful
 
@@ -94,6 +108,7 @@ def manual_backup(target, destination, backup_name):
     # source: https://docs.python.org/3/library/datetime.html#datetime.datetime.strftime
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     backup_name = f"{backup_name}_{timestamp}" #add timestamp to backup name
+
     try:
         # source: https://www.w3schools.com/python/ref_os_makedirs.asp
         # exist_ok set to True means if the file already exists, continue without raising an exception
@@ -107,7 +122,7 @@ def manual_backup(target, destination, backup_name):
     # Use tar to archive and compress folder to another location in the system
     tar_cmd = f"tar cvzf {destination}{backup_name}.tar.gz {target}" #the tar command will be like: tar cvzf /home/thko1/ops445/a2/backup/test2025-07-26_13-22-21.tar.gz --exclude test1 test2 -C /home/thko1/ops445/a2 filename
     process = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    # Wait till the backup process is complete
+    
     process.wait()
 
     # check exit code
