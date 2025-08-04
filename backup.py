@@ -25,7 +25,11 @@ def main():
                 exit()
             target_path = target_path.rsplit("/",1)
             target_path = " ".join(target_path)
-            target_path = "-C "+target_path #the target path ends like this: "-C /home/thko1/ops445/a2 filename" this is for the tar command later
+            # support root folder backup
+            if not re.search("^/", target_path):
+                target_path = "/" + target_path.strip()
+            else:
+                target_path = "-C "+target_path #the target path ends like this: "-C /home/thko1/ops445/a2 filename" this is for the tar command later
 
             dest_path = f"{sys.argv[2]}"
             if not re.findall(r'\/$',dest_path): #check if the path ends with a / if not then add / to the end
@@ -49,7 +53,10 @@ def main():
                 exit()
             target_path = target_path.rsplit("/",1)
             target_path = " ".join(target_path)
-            target_path = "-C "+target_path #the target path ends like this: "-C /home/thko1/ops445/a2 filename" this is for the tar command later
+            if not re.search("^/", target_path):
+                target_path = "/" + target_path
+            else:
+                target_path = "-C "+target_path #the target path ends like this: "-C /home/thko1/ops445/a2 filename" this is for the tar command later
             
             dest_path = input("Please enter the path you want to store the backup:") 
             #source https://docs.python.org/3/library/re.html
@@ -120,6 +127,10 @@ def manual_backup(target, destination, backup_name):
 
     print("Backing up...")
     # Use tar to archive and compress folder to another location in the system
+    print(f"Target: {target}")
+    print(f"Destination: {destination}{backup_name}.tar.gz")
+    print(f"Running as UID: {os.geteuid()}")
+
     tar_cmd = f"tar cvzf {destination}{backup_name}.tar.gz {target}" #the tar command will be like: tar cvzf /home/thko1/ops445/a2/backup/test2025-07-26_13-22-21.tar.gz --exclude test1 test2 -C /home/thko1/ops445/a2 filename
     process = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     
