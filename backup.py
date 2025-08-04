@@ -15,13 +15,14 @@ def main():
             print("Welcome to BackupG4. Entering Manual backup...")
 
             target_path = sys.argv[1]
+
             # support home directory expansion "~". source https://docs.python.org/3/library/os.path.html#os.path.expanduser
             target_path = os.path.expanduser(target_path)
 
             # check if the file or folder exists. source https://docs.python.org/3/library/os.path.html#os.path.exists
             if not os.path.exists(target_path):
                 print(f"{target_path} does not exist.")
-                return
+                exit()
             target_path = target_path.rsplit("/",1)
             target_path = " ".join(target_path)
             # support root folder backup
@@ -34,8 +35,8 @@ def main():
             if not re.findall(r'\/$',dest_path): #check if the path ends with a / if not then add / to the end
                 dest_path = dest_path + "/" #add / to the end
             backup_name = f"{sys.argv[3]}" 
-            
             dest_path = os.path.expanduser(dest_path)
+             
             # Call manual_backup function
             manual_backup(target_path, dest_path, backup_name) #call backup function
             return
@@ -44,12 +45,12 @@ def main():
         if len(sys.argv) != 4:
                   
             mode = int(input(f"Welcome to BackupG4, a program to back up your files.\nYou have 2 options:\nRerun the file as \"{sys.argv[0]} target_path destination_path backup_name\" to do a manual backup\nOR\nChoose a backup mode:\n1, Auto backup\n2, Manual backup\n"))
-
+    
             target_path = input("Please enter the path you want to back up:")
             target_path = os.path.expanduser(target_path)
             if not os.path.exists(target_path):
                 print(f"{target_path} does not exist.")
-                return
+                exit()
             target_path = target_path.rsplit("/",1)
             target_path = " ".join(target_path)
             if not re.search("^/", target_path):
@@ -58,7 +59,6 @@ def main():
                 target_path = "-C "+target_path #the target path ends like this: "-C /home/thko1/ops445/a2 filename" this is for the tar command later
             
             dest_path = input("Please enter the path you want to store the backup:") 
-            dest_path = os.path.expanduser(dest_path)
             #source https://docs.python.org/3/library/re.html
             if not re.findall(r'\/$',dest_path): #check if the path ends with a / if not then add / to the end
                 dest_path = dest_path + "/"  #add / to the end
@@ -71,8 +71,8 @@ def main():
                     target_path = f"--exclude {x} " + target_path #end prodcut will be like: "--exclude test1 test2 -C /home/thko1/ops445/a2 filename"
 
             backup_name = input("Please enter a name of your backup:")
+            dest_path = os.path.expanduser(dest_path)
             
-
             if mode == 1:
                 print("Entering auto backup...")
                 auto_result = auto_backup(target_path, dest_path, backup_name) #call auto backup function and get the result of successful or not
