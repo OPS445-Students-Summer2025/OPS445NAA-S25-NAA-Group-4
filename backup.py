@@ -22,7 +22,7 @@ def main():
             # check if the file or folder exists. source https://docs.python.org/3/library/os.path.html#os.path.exists
             if not os.path.exists(target_path):
                 print(f"{target_path} does not exist.")
-                exit()
+                return
             target_path = target_path.rsplit("/",1)
             target_path = " ".join(target_path)
             # support root folder backup
@@ -50,11 +50,11 @@ def main():
             target_path = os.path.expanduser(target_path)
             if not os.path.exists(target_path):
                 print(f"{target_path} does not exist.")
-                exit()
+                return
             target_path = target_path.rsplit("/",1)
             target_path = " ".join(target_path)
             if not re.search("^/", target_path):
-                target_path = "/" + target_path
+                target_path = "/" + target_path.strip()
             else:
                 target_path = "-C "+target_path #the target path ends like this: "-C /home/thko1/ops445/a2 filename" this is for the tar command later
             
@@ -127,9 +127,9 @@ def manual_backup(target, destination, backup_name):
 
     print("Backing up...")
     # Use tar to archive and compress folder to another location in the system
-    print(f"Target: {target}")
-    print(f"Destination: {destination}{backup_name}.tar.gz")
-    print(f"Running as UID: {os.geteuid()}")
+    #print(f"Target: {target}")
+    #print(f"Destination: {destination}{backup_name}.tar.gz")
+    #print(f"Running as UID: {os.geteuid()}")
 
     tar_cmd = f"tar cvzf {destination}{backup_name}.tar.gz {target}" #the tar command will be like: tar cvzf /home/thko1/ops445/a2/backup/test2025-07-26_13-22-21.tar.gz --exclude test1 test2 -C /home/thko1/ops445/a2 filename
     process = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
