@@ -15,7 +15,6 @@ def main():
             print("Welcome to BackupG4. Entering Manual backup...")
 
             target_path = sys.argv[1]
-
             # support home directory expansion "~". source https://docs.python.org/3/library/os.path.html#os.path.expanduser
             target_path = os.path.expanduser(target_path)
 
@@ -32,10 +31,11 @@ def main():
                 target_path = "-C "+target_path #the target path ends like this: "-C /home/thko1/ops445/a2 filename" this is for the tar command later
 
             dest_path = f"{sys.argv[2]}"
+            dest_path = os.path.expanduser(dest_path)
             if not re.findall(r'\/$',dest_path): #check if the path ends with a / if not then add / to the end
                 dest_path = dest_path + "/" #add / to the end
             backup_name = f"{sys.argv[3]}" 
-            dest_path = os.path.expanduser(dest_path)
+            
              
             # Call manual_backup function
             manual_backup(target_path, dest_path, backup_name) #call backup function
@@ -59,6 +59,7 @@ def main():
                 target_path = "-C "+target_path #the target path ends like this: "-C /home/thko1/ops445/a2 filename" this is for the tar command later
             
             dest_path = input("Please enter the path you want to store the backup:") 
+            dest_path = os.path.expanduser(dest_path)
             #source https://docs.python.org/3/library/re.html
             if not re.findall(r'\/$',dest_path): #check if the path ends with a / if not then add / to the end
                 dest_path = dest_path + "/"  #add / to the end
@@ -71,7 +72,7 @@ def main():
                     target_path = f"--exclude {x} " + target_path #end prodcut will be like: "--exclude test1 test2 -C /home/thko1/ops445/a2 filename"
 
             backup_name = input("Please enter a name of your backup:")
-            dest_path = os.path.expanduser(dest_path)
+           
             
             if mode == 1:
                 print("Entering auto backup...")
