@@ -5,16 +5,23 @@ import sys
 import os
 import datetime
 import re
+import argparse
 
 def main():
     
     # If the user entered correct arguments, run manual backup. All the user's inputs are from the arguments
     try:
-        if len(sys.argv) == 4: 
+        # use parser module instead of sys.argv. source https://docs.python.org/3/library/argparse.html#module-argparse
+        parser = argparse.ArgumentParser()
+        parser.add_argument("target_path", nargs="?")
+        parser.add_argument("dest_path", nargs="?")
+        parser.add_argument("backup_name", nargs="?")
+        args = parser.parse_args()
+        if args.target_path and args.dest_path and args.backup_name:
 
             print("Welcome to BackupG4. Entering Manual backup...")
 
-            target_path = sys.argv[1]
+            target_path = args.target_path
             # support home directory expansion "~". source https://docs.python.org/3/library/os.path.html#os.path.expanduser
             target_path = os.path.expanduser(target_path)
 
@@ -30,11 +37,11 @@ def main():
             else:
                 target_path = "-C "+target_path #the target path ends like this: "-C /home/thko1/ops445/a2 filename" this is for the tar command later
 
-            dest_path = f"{sys.argv[2]}"
+            dest_path = args.dest_path
             dest_path = os.path.expanduser(dest_path)
             if not re.findall(r'\/$',dest_path): #check if the path ends with a / if not then add / to the end
                 dest_path = dest_path + "/" #add / to the end
-            backup_name = f"{sys.argv[3]}" 
+            backup_name = args.backup_name
             
              
             # Call manual_backup function
@@ -42,7 +49,7 @@ def main():
             return
         
     # If the user did not enter correct arguments, ask user to choose backup mode
-        if len(sys.argv) != 4:
+        else:
                   
             mode = int(input(f"Welcome to BackupG4, a program to back up your files.\nYou have 2 options:\nRerun the file as \"{sys.argv[0]} target_path destination_path backup_name\" to do a manual backup\nOR\nChoose a backup mode:\n1, Auto backup\n2, Manual backup\n"))
     
