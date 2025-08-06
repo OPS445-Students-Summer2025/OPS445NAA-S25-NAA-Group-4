@@ -49,7 +49,7 @@ def main():
             return
         
     # If the user did not enter correct arguments, ask user to choose backup mode
-        if len(sys.argv) != 4:
+        else:
                   
             mode = int(input(f"Welcome to BackupG4, a program to back up your files.\nYou have 2 options:\nRerun the file as \"{sys.argv[0]} target_path destination_path backup_name\" to do a manual backup\nOR\nChoose a backup mode:\n1, Auto backup\n2, Manual backup\n"))
     
