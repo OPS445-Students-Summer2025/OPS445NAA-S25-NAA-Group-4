@@ -28,7 +28,7 @@ def main():
             if not os.path.exists(target_path):
                 print(f"{target_path} does not exist.")
                 return
-            if re.findall(r'\/$',target_path): #check if the path ends with a / if yes then delete it
+            if re.findall(r'/$',target_path): #check if the path ends with a / if yes then delete it
                 target_path = target_path - "/"  #delete / at the end
             if not re.findall("^/[^/]*$", target_path): # for edge case of file starting from root for example: /etc
                 target_path = target_path.rsplit("/",1)
@@ -38,7 +38,7 @@ def main():
 
             dest_path = args.dest_path
             dest_path = os.path.expanduser(dest_path)
-            if not re.findall(r'\/$',dest_path): #check if the path ends with a / if not then add / to the end
+            if not re.findall(r'/$',dest_path): #check if the path ends with a / if not then add / to the end
                 dest_path = dest_path + "/" #add / to the end
             backup_name = args.backup_name
             
@@ -58,7 +58,7 @@ def main():
                 print(f"{target_path} does not exist.")
                 return
 
-            if re.findall(r'\/$',target_path): #check if the path ends with a / if yes then delete it
+            if re.findall(r'/$',target_path): #check if the path ends with a / if yes then delete it
                 target_path = target_path - "/"  #delete / at the end
             if not re.findall("^/[^/]*$", target_path): # for edge case of file starting from root for example: /etc
                 target_path = target_path.rsplit("/",1)
@@ -68,7 +68,7 @@ def main():
             dest_path = input("Please enter the path you want to store the backup:") 
             dest_path = os.path.expanduser(dest_path)
             #source https://docs.python.org/3/library/re.html
-            if not re.findall(r'\/$',dest_path): #check if the path ends with a / if not then add / to the end
+            if not re.findall(r'/$',dest_path): #check if the path ends with a / if not then add / to the end
                 dest_path = dest_path + "/"  #add / to the end
 
             backup_name = input("Please enter a name of your backup:")
