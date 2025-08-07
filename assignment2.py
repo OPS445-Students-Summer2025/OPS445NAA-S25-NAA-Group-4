@@ -4,7 +4,7 @@
 OPS445 Assignment 2
 Program: assignment2.py 
 The python code in this file is original work written by 
-"OPS445 NAA GROUP 4". No code in this file is copied and pasted 
+"OPS445 NAA GROUP 4". No code in this file is used without reference
 from any other source except those provided by on-line resources 
 where sources are documented. We have not shared this python script
 with anyone or anything except for submission for grading. We 
@@ -20,7 +20,8 @@ Description: <Script will perform backup and restore capabilities.
               Backup can be done manually through the commandline
               interface or through a user guided process. Autobackup
               can also be set up as well to regularly backup a certain
-              file/dir using crontab as the scheduling program. This
+              file/dir using crontab as the scheduling program. The
+              same goes for the restore functionaility. This
               program assumes the user is using a Linux based OS with
               the following modules/python scripts downloaded and in
               the same directory:
@@ -43,7 +44,6 @@ Description: <Script will perform backup and restore capabilities.
               tarfile
               
               cron
-              rsync
               
               This program assumes that if the user did not backup
               files using this program that when running the restore
