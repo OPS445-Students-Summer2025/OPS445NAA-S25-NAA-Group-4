@@ -44,7 +44,6 @@ Description: <Script will perform backup and restore capabilities.
               tarfile
               
               cron
-              rsync
               
               This program assumes that if the user did not backup
               files using this program that when running the restore
