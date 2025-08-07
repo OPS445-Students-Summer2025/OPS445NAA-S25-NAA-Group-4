@@ -28,6 +28,8 @@ def main():
             if not os.path.exists(target_path):
                 print(f"{target_path} does not exist.")
                 return
+            if re.findall(r'\/$',target_path): #check if the path ends with a / if yes then delete it
+                target_path = target_path - "/"  #delete / at the end
             if not re.findall("^/[^/]*$", target_path): # for edge case of file starting from root for example: /etc
                 target_path = target_path.rsplit("/",1)
                 target_path = " ".join(target_path)
@@ -55,6 +57,9 @@ def main():
             if not os.path.exists(target_path): #this will check if a directory exisit
                 print(f"{target_path} does not exist.")
                 return
+
+            if re.findall(r'\/$',target_path): #check if the path ends with a / if yes then delete it
+                target_path = target_path - "/"  #delete / at the end
             if not re.findall("^/[^/]*$", target_path): # for edge case of file starting from root for example: /etc
                 target_path = target_path.rsplit("/",1)
                 target_path = " ".join(target_path)
