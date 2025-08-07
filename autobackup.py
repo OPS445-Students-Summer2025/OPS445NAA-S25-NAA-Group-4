@@ -9,7 +9,7 @@ import glob
 import re
 
 def logging(message):
-     logpath = re.sub(r'\/[^/]*$',"/log.txt",sys.argv[0]) #replace the end of current path to /log.txt
+     logpath = re.sub(r'/[^/]*$',"/log.txt",sys.argv[0]) #replace the end of current path to /log.txt
      time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") #time stamp
      try:
           file = open(logpath,"a") #open log file for logging
