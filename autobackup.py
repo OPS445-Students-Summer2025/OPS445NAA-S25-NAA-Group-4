@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-import subprocess
 import sys
+import subprocess
+import argparse
 import os
 import datetime
 import glob
@@ -17,10 +18,16 @@ def logging(message):
      except:
           pass
 
+parser = argparse.ArgumentParser() #create argparse object
+parser.add_argument("target_path", nargs="?") #add a positional argument target_path into the python script
+parser.add_argument("dest_path", nargs="?") #add dest_path positional argument
+parser.add_argument("backup_name", nargs="?") #add backup_name positional argument
+args = parser.parse_args() #make a object that contain all the argument entered
+
 timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-target_path = sys.argv[1] #target path from cron job for example: "-C /home/thko1/ops445/a2 things"
-dest_path = f"{sys.argv[2]}" #destination path for example: "/home/thko1/ops445/backup/"
-backup_name = f"{sys.argv[3]}_{timestamp}" 
+target_path = f"{args.target_path}" #target path from cron job for example: "-C /home/thko1/ops445/a2 things"
+dest_path = f"{args.dest_path}" #destination path for example: "/home/thko1/ops445/backup/"
+backup_name = f"{args.backup_name}_{timestamp}" 
 
 try:
     os.makedirs(dest_path, exist_ok=True) #check if it can make file in the destination path 
@@ -35,8 +42,9 @@ process = subprocess.Popen(tar_cmd, stdout=subprocess.PIPE, stdin=subprocess.PIP
 process.wait() # wait a bit
 
 if process.returncode == 0: #if backup is sucessful
-     target = sys.argv[1].rsplit(" ",2)
-     target = target[1] + "/" + target[2]
+     target = args.target_path.rsplit(" ",2)
+     if len(target) > 1: #for edge case of file starting from root / for example /etc
+          target = target[1] + "/" + target[2]
      logging(f"Auto backup of {target} was sucessful!") #log a message of backup sucessful
 else: #if backup is not sucessful
      logging("Error: Auto backup failed. Deleteing crontab...") #log a message of backup not sucessful
